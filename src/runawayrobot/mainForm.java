@@ -7,12 +7,18 @@ package runawayrobot;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Random;
+import java.util.TimerTask;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 
 /**
@@ -25,15 +31,42 @@ public class mainForm extends javax.swing.JFrame {
     private int kichThuocToiThieu = 4;
     private int soLuongLevel = 3;
     private JButton[][] Map;
+    private JButton[] DanhSachNuocDi;
+    int sizeButtonBuocDi;
     private int soLuongNuocDi;
+    private int soLuongNuocDiThucTe = 0;
+    int idx = 0;
+    int viTriDongRobot = 0;
+    int viTriCotRobot = 0;
     /**
      * Creates new form mainForm
      */
+    public ImageIcon getIconButton(String name, int width, int height){
+        ImageIcon imageIcon = new ImageIcon("images/"+name+".png");
+        Image img = imageIcon.getImage();
+        Image newImg = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        ImageIcon image = new ImageIcon(newImg);
+        return image;
+    }
     public mainForm() {
         initComponents();
         this.setLocationRelativeTo(null);
+        btnGo.setVisible(false);
         this.setSize(800, 800);
         
+        ImageIcon imgQuaPhai = getIconButton("right", 60,60);
+        btnQuaPhai.setIcon(imgQuaPhai);
+        
+        ImageIcon imgXuong = getIconButton("down", 60,60);
+        btnXuongDuoi.setIcon(imgXuong);
+        
+        ImageIcon imgXoa = getIconButton("Delete", 60,60);
+        btnXoa.setIcon(imgXoa);
+        
+        ImageIcon imgGo = getIconButton("go", 60,60);
+        btnGo.setIcon(imgGo);
+        
+      
     }
 
     /**
@@ -50,6 +83,10 @@ public class mainForm extends javax.swing.JFrame {
         txtLevel = new javax.swing.JTextField();
         btnTaoMap = new javax.swing.JButton();
         panel = new javax.swing.JPanel();
+        btnQuaPhai = new javax.swing.JButton();
+        btnXuongDuoi = new javax.swing.JButton();
+        btnXoa = new javax.swing.JButton();
+        btnGo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Runaway Robot");
@@ -60,9 +97,12 @@ public class mainForm extends javax.swing.JFrame {
         lblTaomap.setFont(new java.awt.Font("Tahoma", 2, 14)); // NOI18N
         lblTaomap.setText("Nhập vào level");
 
+        txtLevel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
         btnTaoMap.setBackground(new java.awt.Color(255, 255, 255));
         btnTaoMap.setFont(new java.awt.Font("Tahoma", 2, 14)); // NOI18N
         btnTaoMap.setText("Tạo Map");
+        btnTaoMap.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTaoMap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTaoMapActionPerformed(evt);
@@ -79,15 +119,51 @@ public class mainForm extends javax.swing.JFrame {
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 767, Short.MAX_VALUE)
+            .addGap(0, 755, Short.MAX_VALUE)
         );
+
+        btnQuaPhai.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnQuaPhai.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnQuaPhaiActionPerformed(evt);
+            }
+        });
+
+        btnXuongDuoi.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnXuongDuoi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXuongDuoiActionPerformed(evt);
+            }
+        });
+
+        btnXoa.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaActionPerformed(evt);
+            }
+        });
+
+        btnGo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(411, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(btnQuaPhai, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15)
+                .addComponent(btnXuongDuoi, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnGo, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
                 .addComponent(lblTaomap, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(txtLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -99,13 +175,19 @@ public class mainForm extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(13, 13, 13)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTaomap)
-                    .addComponent(txtLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTaoMap))
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblTaomap)
+                        .addComponent(txtLevel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnTaoMap))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(btnQuaPhai, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnXuongDuoi, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGo, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -128,11 +210,17 @@ public class mainForm extends javax.swing.JFrame {
     private void btnTaoMapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTaoMapActionPerformed
        
         try {
+            
+            
             //Lấy dữ liệu từ textBox
             level = Integer.parseInt(txtLevel.getText());
             n = (level - 1)/soLuongLevel + kichThuocToiThieu;
-
+            
             panel.removeAll();
+            idx = 0;
+            viTriDongRobot = 0;
+            viTriCotRobot = 0;
+            soLuongNuocDiThucTe = 0;
             this.setSize(801, 801);
             Map = new JButton[n][n];
             int kichThuoc = 600;
@@ -165,6 +253,7 @@ public class mainForm extends javax.swing.JFrame {
             int min = (int)((n*n - 2 *n)*(0.15));
             int max = (int)((n*n - 2 *n)*(0.2) + 1);
             int  SoLuongBom = rand.nextInt(max - min) + min; 
+            
 //            JOptionPane.showMessageDialog(null, SoLuongBom);
             //Bước 2: cho bom hiển thị theo đúng quy tắc
             for(int  i = 0; i < SoLuongBom; i++){
@@ -174,7 +263,6 @@ public class mainForm extends javax.swing.JFrame {
                     viTriCot_ChuongNgaivat = rand.nextInt(n-1);
                     viTriDong_ChuongNgaiVat = rand.nextInt(n-1);
                 } while (Map[viTriDong_ChuongNgaiVat][viTriCot_ChuongNgaivat].getIcon() != null); // Bom khác vị trí Robot
-//                JOptionPane.showMessageDialog(null,SoLuongBom +  "--Dong: " + viTriDong_ChuongNgaiVat+ "Cột: " +viTriCot_ChuongNgaivat);
                 //Bom không được trùng lên nhau
                 /**
                  * Có 2 cách xử lý: Tạo ra 1 mảng lưu trữ thông tin câu hỏi hợp lệ: mỗi câu khi rand ra lại kiểm tra với mảng
@@ -190,22 +278,37 @@ public class mainForm extends javax.swing.JFrame {
                 
                 
             }
-            //Hiển thij nước đi cho phép
+            //Hiển thị nước đi cho phép
             //Bước 1: tính tổng số nước đi dựa trên n
             int maxNuocDi = (int)(0.75 * n) + 1;
             int minNuocDi = (int)(0.5 * n);
             soLuongNuocDi = rand.nextInt(maxNuocDi - minNuocDi) + minNuocDi;
 //            JOptionPane.showMessageDialog(null, soLuongNuocDi);
             //Bước 2: button nước đi
-            JButton[] DanhSachNuocDi = new JButton[soLuongNuocDi];
+            DanhSachNuocDi = new JButton[soLuongNuocDi];
+            sizeButtonBuocDi = 60;
+            if(soLuongNuocDi > this.getWidth()/sizeButtonBuocDi){
+                sizeButtonBuocDi  = (this.getWidth() - 60)/soLuongNuocDi;
+            }
             for(int i = 0; i <soLuongNuocDi; i++){
                 DanhSachNuocDi[i] = new JButton();
-                DanhSachNuocDi[i].setSize(30,30);
+                DanhSachNuocDi[i].setSize(sizeButtonBuocDi,sizeButtonBuocDi);
                 DanhSachNuocDi[i].setLocation(i*DanhSachNuocDi[i].getWidth(), Map[0][0].getLocation().y - DanhSachNuocDi[i].getHeight() - 5);
                 this.setSize(801, 801);
                 panel.add(DanhSachNuocDi[i]);
+                if( i >= soLuongNuocDi / 2 ) {
+                    DanhSachNuocDi[i].setText("GO");
+                }
             }
-            
+            JButton btnLoop = new JButton();
+            btnLoop.setSize(sizeButtonBuocDi, sizeButtonBuocDi);
+            //sizeButtonBuocDi*soLuongNuocDi, 
+            btnLoop.setLocation(sizeButtonBuocDi*soLuongNuocDi,Map[0][0].getLocation().y - sizeButtonBuocDi - 5);
+            ImageIcon loop = getIconButton("loop", sizeButtonBuocDi, sizeButtonBuocDi);
+            btnLoop.setContentAreaFilled(false);
+            btnLoop.setIcon(loop);
+            panel.add(btnLoop);
+            this.setSize(800, 800);
             
         } catch (Exception e) {
             txtLevel.setText("");
@@ -213,6 +316,106 @@ public class mainForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnTaoMapActionPerformed
 
+    private void btnXuongDuoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuongDuoiActionPerformed
+         for(int i = 0; i <soLuongNuocDi; i++){
+            if(DanhSachNuocDi[i].getIcon() == null){
+                soLuongNuocDiThucTe++;
+                ImageIcon imgDown = getIconButton("down", sizeButtonBuocDi, sizeButtonBuocDi);
+                DanhSachNuocDi[i].setIcon(imgDown);
+                DanhSachNuocDi[i].setName("xuong");
+                if(DanhSachNuocDi[soLuongNuocDi/2].getIcon() != null){
+                    btnGo.setVisible(true);
+                }
+               
+                break;
+            }
+        }
+    }//GEN-LAST:event_btnXuongDuoiActionPerformed
+
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
+        for(int i = soLuongNuocDi -1; i >=0; i--){
+            if(DanhSachNuocDi[i].getIcon() != null){
+                soLuongNuocDiThucTe--;
+                DanhSachNuocDi[i].setIcon(null);
+                DanhSachNuocDi[i].setName("");
+                if(DanhSachNuocDi[soLuongNuocDi/2].getIcon() == null){
+                    btnGo.setVisible(false);
+                }
+                break;
+            }
+        }
+    }//GEN-LAST:event_btnXoaActionPerformed
+    public void CheckWinLose(){
+        if(viTriCotRobot == n - 1 || viTriDongRobot == n - 1){
+            time.stop();
+            int Width =  Map[viTriDongRobot][viTriCotRobot].getWidth();
+            Map[viTriDongRobot][viTriCotRobot].setIcon(getIconButton("robot", Width, Width));
+            JOptionPane.showMessageDialog(null, "Bạn đã chiến thắng!");
+               
+        }else if(Map[viTriDongRobot][viTriCotRobot].getIcon()  != null){ //đụng boom
+            time.stop();
+            int Width =  Map[viTriDongRobot][viTriCotRobot].getWidth();
+            Map[viTriDongRobot][viTriCotRobot].setIcon(getIconButton("bigbang", Width, Width));
+            JOptionPane.showMessageDialog(null, "Bạn đã thua !");
+
+         }else{
+            int Width =  Map[viTriDongRobot][viTriCotRobot].getWidth();
+            Map[viTriDongRobot][viTriCotRobot].setIcon(getIconButton("robot", Width, Width));
+        }
+    }
+    public void DiChuyen(){
+                   
+//        JOptionPane.showMessageDialog(null, DanhSachNuocDi[idx].getName());
+         //Nếu đi xuống=> dữ nguyên cột tăng dòng
+        if(DanhSachNuocDi[idx].getName().equals("xuong")){
+            Map[viTriDongRobot][viTriCotRobot].setIcon(null);
+            viTriDongRobot++;
+            CheckWinLose();
+            
+            
+        }else if(DanhSachNuocDi[idx].getName().equals("phai")){
+            Map[viTriDongRobot][viTriCotRobot].setIcon(null);
+            viTriCotRobot++;
+            CheckWinLose();
+            
+        }
+        
+        idx++;
+        if(idx == soLuongNuocDiThucTe){
+            idx = 0;
+            
+        }
+        
+    }
+     Timer time;
+    private void btnGoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGoActionPerformed
+       time = new Timer(300, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DiChuyen();
+            }
+        });
+        time.start();
+
+        
+    }//GEN-LAST:event_btnGoActionPerformed
+
+    private void btnQuaPhaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuaPhaiActionPerformed
+         //Bấm vào đây kiểm tra trống ở đâu thì thêm vào đó
+        for(int i = 0; i <soLuongNuocDi; i++){
+            if(DanhSachNuocDi[i].getIcon() == null){
+                soLuongNuocDiThucTe++;
+                ImageIcon imgRight = getIconButton("right", sizeButtonBuocDi, sizeButtonBuocDi);
+                DanhSachNuocDi[i].setIcon(imgRight);
+                DanhSachNuocDi[i].setName("phai");
+                if(DanhSachNuocDi[soLuongNuocDi/2].getIcon() != null){
+                    btnGo.setVisible(true);
+                }
+                break;
+            }
+        }
+    }//GEN-LAST:event_btnQuaPhaiActionPerformed
+   
     /**
      * @param args the command line arguments
      */
@@ -249,7 +452,11 @@ public class mainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnGo;
+    private javax.swing.JButton btnQuaPhai;
     private javax.swing.JButton btnTaoMap;
+    private javax.swing.JButton btnXoa;
+    private javax.swing.JButton btnXuongDuoi;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel lblTaomap;
     private javax.swing.JPanel panel;
